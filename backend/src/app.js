@@ -1,9 +1,8 @@
-const fs = require('node:fs');
 const path = require('node:path');
-const crypto = require('node:crypto');
 const express = require('express');
 const multer = require('multer');
 const documentRoutes = require('./routes/documentRoutes');
+const createDocumentUpload = require('./middleware/documentUpload');
 const createDocumentController = require('./controllers/documentController');
 const createDocumentService = require('./services/documentService');
 const createDocumentRepository = require('./repositories/documentRepository');
@@ -25,16 +24,7 @@ function createApp(options = {}) {
   const repository = createDocumentRepository({ storageDir });
   const service = createDocumentService({ repository });
   const controller = createDocumentController({ service });
-  const storage = multer.diskStorage({
-    destination: (_request, _file, callback) => {
-      fs.mkdir(storageDir, { recursive: true }, (error) => callback(error, storageDir));
-    },
-    filename: (_request, _file, callback) => callback(null, crypto.randomUUID())
-  });
-  const upload = multer({
-    storage,
-    limits: { fileSize: maxFileSizeBytes, files: 1 }
-  });
+  const upload = createDocumentUpload({ storageDir, maxFileSizeBytes });
 
   const app = express();
   app.use(express.json());
