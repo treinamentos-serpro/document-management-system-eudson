@@ -185,6 +185,7 @@ button:disabled { cursor: not-allowed; opacity: .52; }
 .upload-submit { justify-self: start; }
 
 .documents-section { min-width: 0; }
+.documents-heading-actions { display: flex; align-items: center; gap: 8px; }
 .document-count {
   min-width: 36px;
   padding: 6px 8px;

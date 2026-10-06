@@ -17,6 +17,7 @@ export default function DocumentsPage() {
   const [userId, setUserId] = useState(getStoredUserId);
   const [userIdInput, setUserIdInput] = useState(userId);
   const [documents, setDocuments] = useState([]);
+  const [refreshVersion, setRefreshVersion] = useState(0);
   const [isLoading, setIsLoading] = useState(false);
   const [isUploading, setIsUploading] = useState(false);
   const [downloadingId, setDownloadingId] = useState(null);
@@ -42,7 +43,11 @@ export default function DocumentsPage() {
       });
 
     return () => controller.abort();
-  }, [userId]);
+  }, [userId, refreshVersion]);
+
+  function handleRefresh() {
+    setRefreshVersion((version) => version + 1);
+  }
 
   function handleUserSubmit(event) {
     event.preventDefault();
@@ -155,7 +160,17 @@ export default function DocumentsPage() {
                 <p className="section-kicker">BIBLIOTECA</p>
                 <h2 id="documents-heading">Documentos</h2>
               </div>
-              <span className="document-count">{documents.length.toString().padStart(2, '0')}</span>
+              <div className="documents-heading-actions">
+                <button
+                  className="button button-secondary"
+                  type="button"
+                  onClick={handleRefresh}
+                  disabled={!userId || isLoading}
+                >
+                  Atualizar
+                </button>
+                <span className="document-count">{documents.length.toString().padStart(2, '0')}</span>
+              </div>
             </div>
             {!userId ? (
               <p className="list-message">Acesse seu espaço para ver os documentos.</p>
